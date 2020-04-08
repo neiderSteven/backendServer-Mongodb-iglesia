@@ -2,15 +2,16 @@ var express = require('express');
 
 var app = express();
 
-var Hospital = require('../models/hospital');
-var Medico = require('../models/medico');
-var Usuario = require('../models/usuario');
+//var Hospital = require('../models/hospital');
+var Iglesias = require('../models/iglesias');
+var Usuarios = require('../models/usuarios');
 
 //------------------------------------------------------
 // buesqueda especifica
 //------------------------------------------------------
-app.get('/coleccion/:tabla/:busqueda', (req, res) => {
+app.get('/:id/:tabla/:busqueda', (req, res) => {
 
+    var id = req.params.id;
     var tabla = req.params.tabla;
     var busqueda = req.params.busqueda;
     var regexp = new RegExp(busqueda, 'i');
@@ -19,16 +20,16 @@ app.get('/coleccion/:tabla/:busqueda', (req, res) => {
         case 'usuarios':
             promesa = buscarUsuarios(busqueda, regexp);
             break;
-        case 'medicos':
-            promesa = buscarMedicos(busqueda, regexp);
+        case 'iglesias':
+            promesa = buscarIglesias(busqueda, regexp);
             break;
-        case 'hospitales':
+        /*case 'hospitales':
             promesa = buscarHospitales(busqueda, regexp);
-            break;
+            break;*/
         default:
             return res.status(400).json({
                 ok: false,
-                mensaje: 'tipos de busqueda solo son:usuarios, medicos, hospitales',
+                mensaje: 'tipos de busqueda solo son:usuarios, iglesias, visitas',
                 error: { mensaje: 'tipo de tabla/coleccion no valido' }
             });
             break;
@@ -36,9 +37,18 @@ app.get('/coleccion/:tabla/:busqueda', (req, res) => {
 
     promesa.then(data => {
 
+        var datas = [];
+
+        for (let index = 0; index < data.length; index++) {
+            if (id == data[index].pastor) {
+                datas.push(data[index]);
+            }
+
+        }
+
         res.status(200).json({
             ok: true,
-            [tabla]: data
+            [tabla]: datas
         });
     });
 });
@@ -85,19 +95,19 @@ function buscarHospitales(busqueda, regexp) {
     });
 }
 
-function buscarMedicos(busqueda, regexp) {
+function buscarIglesias(busqueda, regexp) {
 
     return new Promise((resolve, reject) => {
 
-        Medico.find({ nombre: regexp })
-            .populate('usuario', 'nombre email')
-            .populate('hospital')
-            .exec((err, medicos) => {
+        Iglesias.find({ nombre: regexp })
+            //.populate('usuario', 'nombre email')
+            //.populate('hospital')
+            .exec((err, iglesias) => {
 
                 if (err) {
-                    reject('error al cargar medicos', err);
+                    reject('error al cargar iglesias', err);
                 } else {
-                    resolve(medicos);
+                    resolve(iglesias);
                 }
             });
     });
@@ -107,7 +117,7 @@ function buscarUsuarios(busqueda, regexp) {
 
     return new Promise((resolve, reject) => {
 
-        Usuario.find({}, 'nombre email role')
+        Usuarios.find({}, 'nombre email role')
             .or([{ 'nombre': regexp }, { 'email': regexp }])
             .exec((err, usuarios) => {
 

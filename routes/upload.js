@@ -8,9 +8,9 @@ var fs = require('fs');
 //inicializar variables
 var app = express();
 
-var Usuario = require('../models/usuario');
-var Medico = require('../models/medico');
-var Hospital = require('../models/hospital');
+var Usuarios = require('../models/usuarios');
+var Iglesias = require('../models/iglesias');
+//var Hospital = require('../models/hospital');
 
 // default options
 app.use(fileUpload());
@@ -22,7 +22,7 @@ app.put('/:tipo/:id', (req, res, next) => {
     var id = req.params.id;
 
     //tipos de coleccion
-    var tiposValidos = ['hospitales', 'medicos', 'usuarios'];
+    var tiposValidos = ['iglesias', 'usuarios'];
 
     if (tiposValidos.indexOf(tipo) < 0) {
         return res.status(400).json({
@@ -87,7 +87,7 @@ function subirPorTipo(tipo, id, nombreArchivo, res) {
 
     if (tipo === 'usuarios') {
 
-        Usuario.findById(id, (err, usuario) => {
+        Usuarios.findById(id, (err, usuario) => {
 
             if (!usuario) {
                 return res.status(400).json({
@@ -119,39 +119,39 @@ function subirPorTipo(tipo, id, nombreArchivo, res) {
         });
     }
 
-    if (tipo === 'medicos') {
+    if (tipo === 'iglesias') {
 
-        Medico.findById(id, (err, medico) => {
+        Iglesias.findById(id, (err, iglesia) => {
 
-            var pathViejo = './uploads/medicos/' + medico.img;
+            var pathViejo = './uploads/iglesias/' + iglesia.img;
 
             //si existe, elimina la imagen anterior
             if (fs.existsSync(pathViejo)) {
                 fs.unlinkSync(pathViejo);
             }
 
-            medico.img = nombreArchivo;
+            iglesia.img = nombreArchivo;
 
-            medico.save((err, medicoActualizado) => {
+            iglesia.save((err, iglesiaActualizada) => {
 
-                if (!medico) {
+                if (!iglesia) {
                     return res.status(400).json({
                         ok: false,
-                        mensaje: 'no existe medico',
-                        errors: { mensaje: 'usuario no medico' }
+                        mensaje: 'no existe iglesia',
+                        errors: { mensaje: 'no iglesia' }
                     });
                 }
 
                 return res.status(200).json({
                     ok: true,
-                    mensaje: 'imagen de medico actualizada',
-                    medico: medicoActualizado
+                    mensaje: 'imagen de iglesia actualizada',
+                    iglesia: iglesiaActualizada
                 });
             });
         });
     }
 
-    if (tipo === 'hospitales') {
+    /*if (tipo === 'hospitales') {
 
         Hospital.findById(id, (err, hospital) => {
 
@@ -181,7 +181,7 @@ function subirPorTipo(tipo, id, nombreArchivo, res) {
                 });
             });
         });
-    }
+    }*/
 }
 
 module.exports = app;

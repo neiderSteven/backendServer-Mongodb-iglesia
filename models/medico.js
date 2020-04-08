@@ -8,7 +8,7 @@ var medicoShema = new Schema({
         required: [true, 'el nombre es necesario']
     },
     img: { type: String, required: false },
-    usuario: {
+    pastor: {
         type: Schema.Types.ObjectId,
         ref: 'Usuario', required: true
     },

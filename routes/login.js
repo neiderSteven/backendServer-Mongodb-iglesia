@@ -8,7 +8,7 @@ var SEED = require('../config/config').SEED;
 
 var app = express();
 
-var Usuario = require('../models/usuario');
+var Usuarios = require('../models/usuarios');
 
 //google
 var CLIENT_ID = require('../config/config').CLIENT_ID;
@@ -31,12 +31,14 @@ async function verify(token) {
     return {
         nombre: payload.name,
         email: payload.email,
-        img: payload.picture,
-        gooogle: true,
+        telefono: payload.telefono,
+        distrito: payload.distrito,
+        cargo: true,
+        img: payload.picture
     }
 }
 
-app.post('/google', async (req, res) => {
+/*app.post('/google', async (req, res) => {
 
     var token = req.body.token;
 
@@ -104,7 +106,7 @@ app.post('/google', async (req, res) => {
             });
         }
     });
-});
+});*/
 
 // autenticacion normal
 
@@ -112,7 +114,7 @@ app.post('/', (req, res) => {
 
     var body = req.body;
 
-    Usuario.findOne({ email: body.email }, (err, usuarioDB) => {
+    Usuarios.findOne({ email: body.email }, (err, usuarioDB) => {
 
         if (err) {
             return res.status(500).json({
