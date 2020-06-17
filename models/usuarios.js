@@ -16,11 +16,7 @@ var usuariosSchema = new Schema({
     telefono: { type: Number, required: [true, 'el telefono es necesario'] },
     distrito: { type: String, required: [true, 'el distrito es necesario'] },
     cargo: { type: String, default: 'PASTOR', enum: cargosValidos },
-    img: { type: String, required: false },
-    referencia: {
-        type: Schema.Types.ObjectId,
-        ref: 'Iglesias', required: false
-    }
+    img: { type: String, required: false }
 });
 
 usuariosSchema.plugin(uniqueValidator, { message: 'el {PATH} debe ser unico' });
